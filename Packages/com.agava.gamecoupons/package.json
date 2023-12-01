@@ -1,0 +1,10 @@
+{
+  "name": "com.agava.gamecoupons",
+  "version": "1.0.0",
+  "displayName": "Game Coupons",
+  "type": "library",
+  "unity": "2022.4",
+  "description": "A library for getting real coupons in games.",
+  "license": "MIT",
+  "author": "github.com/artemvetik"
+}
