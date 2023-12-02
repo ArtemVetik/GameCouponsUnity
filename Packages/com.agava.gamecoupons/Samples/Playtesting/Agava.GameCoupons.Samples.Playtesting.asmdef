@@ -1,0 +1,16 @@
+{
+    "name": "Agava.GameCoupons.Samples.Playtesting",
+    "rootNamespace": "Agava.GameCoupons.Samples.Playtesting",
+    "references": [
+        "GUID:3b7f7fcb9e7e01c45b14a1bb5934af11"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
