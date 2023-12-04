@@ -21,9 +21,10 @@ namespace Agava.GameCoupons.Samples.Playtesting
 
         private async void OnRequestButtonClicked()
         {
-            var games = await GameCoupons.GetGames(int.Parse(_page.text), int.Parse(_size.text), (error) => Debug.Log(error));
+            var games = await GameCoupons.GetGames(int.Parse(_page.text), int.Parse(_size.text), (error) => Debug.LogError(error));
 
-            Debug.Log($"GetGames: {JsonUtility.ToJson(games)}");
+            if (games != null)
+                Debug.Log($"GetGames: {JsonUtility.ToJson(games)}");
         }
     }
 }

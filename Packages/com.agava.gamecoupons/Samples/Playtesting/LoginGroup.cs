@@ -22,7 +22,7 @@ namespace Agava.GameCoupons.Samples.Playtesting
 
         private async void OnLoginButtonClicked()
         {
-            var success = await GameCoupons.Login(int.Parse(_idInput.text), _passwordInput.text, (error) => Debug.Log(error));
+            var success = await GameCoupons.Login(int.Parse(_idInput.text), _passwordInput.text, (error) => Debug.LogError(error));
 
             if (success)
             {
