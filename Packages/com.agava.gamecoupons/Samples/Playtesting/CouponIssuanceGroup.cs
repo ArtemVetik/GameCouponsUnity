@@ -40,9 +40,10 @@ namespace Agava.GameCoupons.Samples.Playtesting
                 exclude_organization_ids = exludeOrganizations
             };
 
-            var coupon = await GameCoupons.CouponIssuance(request, (error) => Debug.Log(error));
+            var coupon = await GameCoupons.CouponIssuance(request, (error) => Debug.LogError(error));
 
-            Debug.Log($"Coupon: {JsonUtility.ToJson(coupon)}");
+            if (coupon != null)
+                Debug.Log($"Coupon: {JsonUtility.ToJson(coupon)}");
         }
     }
 }

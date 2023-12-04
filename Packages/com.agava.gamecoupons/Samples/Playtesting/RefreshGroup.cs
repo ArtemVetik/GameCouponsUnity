@@ -19,7 +19,7 @@ namespace Agava.GameCoupons.Samples.Playtesting
 
         private async void OnRefreshButtonClicked()
         {
-            var success = await GameCoupons.Refresh((error) => Debug.Log(error));
+            var success = await GameCoupons.Refresh((error) => Debug.LogError(error));
 
             if (success)
                 Debug.Log($"Access token successfully updated");

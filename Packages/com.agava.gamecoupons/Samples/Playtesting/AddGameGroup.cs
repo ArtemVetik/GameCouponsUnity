@@ -26,9 +26,10 @@ namespace Agava.GameCoupons.Samples.Playtesting
             var genres = string.IsNullOrEmpty(_genres.text) ? new int[0] : _genres.text.Split(',').Select(genre => int.Parse(genre)).ToArray();
             var platforms = string.IsNullOrEmpty(_platforms.text) ? new int[0] : _platforms.text.Split(',').Select(platform => int.Parse(platform)).ToArray();
 
-            var addGameResponse = await GameCoupons.AddGame(_name.text, genres, platforms, (error) => Debug.Log(error));
+            var addGameResponse = await GameCoupons.AddGame(_name.text, genres, platforms, (error) => Debug.LogError(error));
 
-            Debug.Log($"AddGame: {JsonUtility.ToJson(addGameResponse)}");
+            if (addGameResponse != null)
+                Debug.Log($"AddGame: {JsonUtility.ToJson(addGameResponse)}");
         }
     }
 }
