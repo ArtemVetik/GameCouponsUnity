@@ -5,8 +5,7 @@ namespace Agava.GameCoupons.Samples.Playtesting
 {
     public class LoginGroup : MonoBehaviour
     {
-        [SerializeField] private InputField _idInput;
-        [SerializeField] private InputField _passwordInput;
+        [SerializeField] private InputField _functionIdInput;
         [SerializeField] private Button _loginButton;
         [SerializeField] private Text _loginText;
 
@@ -22,7 +21,7 @@ namespace Agava.GameCoupons.Samples.Playtesting
 
         private async void OnLoginButtonClicked()
         {
-            var success = await GameCoupons.Login(int.Parse(_idInput.text), _passwordInput.text, (error) => Debug.LogError(error));
+            var success = await GameCoupons.Login(_functionIdInput.text, (error) => Debug.LogError(error));
 
             if (success)
             {
