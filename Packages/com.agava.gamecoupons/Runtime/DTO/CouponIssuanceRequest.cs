@@ -7,9 +7,9 @@ namespace Agava.GameCoupons
     public class CouponIssuanceRequest
     {
         [field: Preserve]
-        public int longitude;
+        public float longitude;
         [field: Preserve]
-        public int latitude;
+        public float latitude;
         [field: Preserve]
         public int game_id;
         [field: Preserve]
