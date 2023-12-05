@@ -12,15 +12,15 @@ namespace Agava.GameCoupons
 
         private static LoginResponse? _loginData;
 
-        public static async Task<bool> Login(int id, string password, Action<string> onErrorCallback = null)
+        public static bool Authorized => _loginData != null;
+
+        public static async Task<bool> Login(string functionId, Action<string> onErrorCallback = null)
         {
-            var postData = JsonUtility.ToJson(new LoginRequest() { id = id, password = password });
-            using var request = UnityWebRequest.Post($"{BaseAddress}/api/v1/login", postData, "application/json");
+            using var request = UnityWebRequest.Post($"https://functions.yandexcloud.net/{functionId}?integration=raw", "{}", "application/json");
 
             await request.SendWebRequest();
-
             _loginData = Parse<LoginResponse>(request, onErrorCallback);
-
+            
             return _loginData != null;
         }
 
@@ -38,7 +38,7 @@ namespace Agava.GameCoupons
         public static async Task<GamesResponse?> GetGames(int page = 1, int size = 50, Action<string> onErrorCallback = null)
         {
             using var request = UnityWebRequest.Get($"{BaseAddress}/api/v1/games?page={page}&size={size}");
-            request.SetRequestHeader("Authorization", $"Bearer{(_loginData ?? default).access}");
+            request.SetRequestHeader("Authorization", $"Bearer {(_loginData ?? default).access}");
 
             await request.SendWebRequest();
 
