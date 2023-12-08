@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Unity.Plastic.Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -16,7 +15,8 @@ namespace Agava.GameCoupons
 
         public static async Task<bool> Login(string functionId, Action<string> onErrorCallback = null)
         {
-            using var request = UnityWebRequest.Post($"https://functions.yandexcloud.net/{functionId}?integration=raw", "{}", "application/json");
+            var postData = "{\"method\": \"LOGIN\"}";
+            using var request = UnityWebRequest.Post($"https://functions.yandexcloud.net/{functionId}?integration=raw", postData, "application/json");
 
             await request.SendWebRequest();
             _loginData = Parse<LoginResponse>(request, onErrorCallback);
@@ -24,10 +24,18 @@ namespace Agava.GameCoupons
             return _loginData != null;
         }
 
-        public static async Task<CouponIssuanceResponse?> CouponIssuance(CouponIssuanceRequest requestData, Action<string> onErrorCallback = null)
+        public static async Task<CouponIssuanceResponse?> CouponIssuance(float longitude, float latitude, int gameId, Action<string> onErrorCallback = null)
         {
-            Debug.Log(JsonConvert.SerializeObject(requestData));
-            using var request = UnityWebRequest.Post($"{BaseAddress}/api/v1/coupon_issuance", JsonConvert.SerializeObject(requestData), "application/json");
+            var requestData = new CouponIssuanceRequest()
+            {
+                longitude = longitude,
+                latitude = latitude,
+                game_id = gameId,
+                genre_ids = new int[0],
+                platform_ids = new int[0],
+                exclude_organization_ids = new int[0],
+            };
+            using var request = UnityWebRequest.Post($"{BaseAddress}/api/v1/coupon_issuance", JsonUtility.ToJson(requestData), "application/json");
             request.SetRequestHeader("Authorization", $"Bearer {(_loginData ?? default).access}");
 
             await request.SendWebRequest();

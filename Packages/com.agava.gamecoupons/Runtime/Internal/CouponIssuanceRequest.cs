@@ -4,7 +4,7 @@ using UnityEngine.Scripting;
 namespace Agava.GameCoupons
 {
     [Serializable]
-    public class CouponIssuanceRequest
+    internal class CouponIssuanceRequest
     {
         [field: Preserve]
         public float longitude;
