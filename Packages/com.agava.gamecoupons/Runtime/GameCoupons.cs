@@ -9,9 +9,10 @@ namespace Agava.GameCoupons
     {
         private const string BaseAddress = "https://stage.game-coupon.com";
 
-        private static LoginResponse? _loginData;
+        private static LoginResponse _loginData;
+        private static string _functionId;
 
-        public static bool Authorized => _loginData != null;
+        public static bool Authorized => _loginData != null && _functionId != null;
 
         public static async Task<bool> Login(string functionId, Action<string> onErrorCallback = null)
         {
@@ -20,12 +21,15 @@ namespace Agava.GameCoupons
 
             await request.SendWebRequest();
             _loginData = Parse<LoginResponse>(request, onErrorCallback);
-            
+            _functionId = functionId;
+
             return _loginData != null;
         }
 
-        public static async Task<CouponIssuanceResponse?> CouponIssuance(float longitude, float latitude, int gameId, Action<string> onErrorCallback = null)
+        public static async Task<CouponIssuanceResponse> CouponIssuance(float longitude, float latitude, int gameId, Action<string> onErrorCallback = null)
         {
+            ThrowIfNotAuthorized();
+
             var requestData = new CouponIssuanceRequest()
             {
                 longitude = longitude,
@@ -36,47 +40,55 @@ namespace Agava.GameCoupons
                 exclude_organization_ids = new int[0],
             };
             using var request = UnityWebRequest.Post($"{BaseAddress}/api/v1/coupon_issuance", JsonUtility.ToJson(requestData), "application/json");
-            request.SetRequestHeader("Authorization", $"Bearer {(_loginData ?? default).access}");
+            request.SetRequestHeader("Authorization", $"Bearer {_loginData.access}");
 
             await request.SendWebRequest();
 
             return Parse<CouponIssuanceResponse>(request, onErrorCallback);
         }
 
-        public static async Task<GamesResponse?> GetGames(int page = 1, int size = 50, Action<string> onErrorCallback = null)
+        public static async Task<GamesResponse> GetGames(int page = 1, int size = 50, Action<string> onErrorCallback = null)
         {
+            ThrowIfNotAuthorized();
+
             using var request = UnityWebRequest.Get($"{BaseAddress}/api/v1/games?page={page}&size={size}");
-            request.SetRequestHeader("Authorization", $"Bearer {(_loginData ?? default).access}");
+            request.SetRequestHeader("Authorization", $"Bearer {_loginData.access}");
 
             await request.SendWebRequest();
 
             return Parse<GamesResponse>(request, onErrorCallback);
         }
 
-        public static async Task<GenresResponse?> Genres(int page = 1, int size = 50, Action<string> onErrorCallback = null)
+        public static async Task<GenresResponse> Genres(int page = 1, int size = 50, Action<string> onErrorCallback = null)
         {
+            ThrowIfNotAuthorized();
+
             using var request = UnityWebRequest.Get($"{BaseAddress}/api/v1/genres?page={page}&size={size}");
-            request.SetRequestHeader("Authorization", $"Bearer {(_loginData ?? default).access}");
+            request.SetRequestHeader("Authorization", $"Bearer {_loginData.access}");
 
             await request.SendWebRequest();
 
             return Parse<GenresResponse>(request, onErrorCallback);
         }
 
-        public static async Task<OrganizationsResponse?> Organizations(int page = 1, int size = 50, Action<string> onErrorCallback = null)
+        public static async Task<OrganizationsResponse> Organizations(int page = 1, int size = 50, Action<string> onErrorCallback = null)
         {
+            ThrowIfNotAuthorized();
+
             using var request = UnityWebRequest.Get($"{BaseAddress}/api/v1/organizations?page={page}&size={size}");
-            request.SetRequestHeader("Authorization", $"Bearer {(_loginData ?? default).access}");
+            request.SetRequestHeader("Authorization", $"Bearer {_loginData.access}");
 
             await request.SendWebRequest();
 
             return Parse<OrganizationsResponse>(request, onErrorCallback);
         }
 
-        public static async Task<PlatformsResponse?> Platforms(int page = 1, int size = 50, Action<string> onErrorCallback = null)
+        public static async Task<PlatformsResponse> Platforms(int page = 1, int size = 50, Action<string> onErrorCallback = null)
         {
+            ThrowIfNotAuthorized();
+
             using var request = UnityWebRequest.Get($"{BaseAddress}/api/v1/platforms?page={page}&size={size}");
-            request.SetRequestHeader("Authorization", $"Bearer {(_loginData ?? default).access}");
+            request.SetRequestHeader("Authorization", $"Bearer {_loginData.access}");
 
             await request.SendWebRequest();
 
@@ -85,7 +97,9 @@ namespace Agava.GameCoupons
 
         public static async Task<bool> Refresh(Action<string> onErrorCallback = null)
         {
-            var postData = $"{{\"refresh\": \"{(_loginData ?? default).refresh}\"}}";
+            ThrowIfNotAuthorized();
+
+            var postData = $"{{\"refresh\": \"{_loginData.refresh}\"}}";
             using var request = UnityWebRequest.Post($"{BaseAddress}/api/v1/refresh", postData, "application/json");
 
             await request.SendWebRequest();
@@ -97,14 +111,30 @@ namespace Agava.GameCoupons
 
             _loginData = new LoginResponse()
             {
-                access = response.Value.access,
-                refresh = _loginData.Value.refresh
+                access = response.access,
+                refresh = _loginData.refresh
             };
 
             return true;
         }
 
-        private static T? Parse<T>(UnityWebRequest request, Action<string> onErrorCallback) where T : struct
+        public static async Task<CityListResponse> CityList(Action<string> onErrorCallback = null)
+        {
+            var postData = "{\"method\": \"CITY_LIST\"}";
+            using var request = UnityWebRequest.Post($"https://functions.yandexcloud.net/{_functionId}?integration=raw", postData, "application/json");
+
+            await request.SendWebRequest();
+
+            return Parse<CityListResponse>(request, onErrorCallback);
+        }
+
+        private static void ThrowIfNotAuthorized()
+        {
+            if (Authorized == false)
+                throw new InvalidOperationException("You have to login first.");
+        }
+
+        private static T Parse<T>(UnityWebRequest request, Action<string> onErrorCallback) where T : class
         {
             if (request.result != UnityWebRequest.Result.Success)
             {

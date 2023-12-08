@@ -4,7 +4,7 @@ using UnityEngine.Scripting;
 namespace Agava.GameCoupons
 {
     [Serializable]
-    public struct LoginResponse
+    public class LoginResponse
     {
         [field: Preserve]
         public string access;
