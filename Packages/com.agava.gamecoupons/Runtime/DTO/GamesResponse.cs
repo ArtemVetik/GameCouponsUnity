@@ -4,7 +4,7 @@ using UnityEngine.Scripting;
 namespace Agava.GameCoupons
 {
     [Serializable]
-    public struct GamesResponse
+    public class GamesResponse
     {
         [field: Preserve]
         public Item[] items;
@@ -18,7 +18,7 @@ namespace Agava.GameCoupons
         public int pages;
 
         [Serializable]
-        public struct Item
+        public class Item
         {
             [field: Preserve]
             public int id;
@@ -31,7 +31,7 @@ namespace Agava.GameCoupons
         }
 
         [Serializable]
-        public struct Genre
+        public class Genre
         {
             [field: Preserve]
             public int id;
@@ -40,7 +40,7 @@ namespace Agava.GameCoupons
         }
 
         [Serializable]
-        public struct Platform
+        public class Platform
         {
             [field: Preserve]
             public int id;

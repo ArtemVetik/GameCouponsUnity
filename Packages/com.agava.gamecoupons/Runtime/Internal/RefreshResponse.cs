@@ -4,7 +4,7 @@ using UnityEngine.Scripting;
 namespace Agava.GameCoupons
 {
     [Serializable]
-    internal struct RefreshResponse
+    internal class RefreshResponse
     {
         [field: Preserve]
         public string access;
