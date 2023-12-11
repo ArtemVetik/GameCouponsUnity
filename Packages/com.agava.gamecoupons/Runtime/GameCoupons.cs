@@ -118,9 +118,9 @@ namespace Agava.GameCoupons
             return true;
         }
 
-        public static async Task<CityListResponse> CityList(Action<string> onErrorCallback = null)
+        public static async Task<CityListResponse> CityList(string language, Action<string> onErrorCallback = null)
         {
-            var postData = "{\"method\": \"CITY_LIST\"}";
+            var postData = $"{{\"method\": \"CITY_LIST\", \"body\": \"{language}\"}}";
             using var request = UnityWebRequest.Post($"https://functions.yandexcloud.net/{_functionId}?integration=raw", postData, "application/json");
 
             await request.SendWebRequest();
