@@ -1,0 +1,17 @@
+{
+    "name": "Agava.GameCoupons.Samples.LocationSelection",
+    "rootNamespace": "Agava.GameCoupons.Samples.LocationSelection",
+    "references": [
+        "GUID:3b7f7fcb9e7e01c45b14a1bb5934af11",
+        "GUID:319c3f3e0468aa74e9fd36fb6664edda"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

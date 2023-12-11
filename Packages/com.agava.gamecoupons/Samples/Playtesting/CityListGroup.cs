@@ -19,13 +19,13 @@ namespace Agava.GameCoupons.Samples.Playtesting
 
         private async void OnCityListButtonClicked()
         {
-            var cityList = await GameCoupons.CityList((error) => Debug.LogError(error));
+            var cityList = await GameCoupons.CityList("en", (error) => Debug.LogError(error));
 
             if (cityList == null)
                 return;
 
             foreach (var city in cityList.Data)
-                Debug.Log($"City: {city.Name} ({city.Longitude}; {city.Latidute})");
+                Debug.Log($"City: {city.Name} ({city.Longitude}; {city.Latitude})");
         }
     }
 }

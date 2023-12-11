@@ -6,5 +6,17 @@
   "unity": "2022.4",
   "description": "A library for getting real coupons in games.",
   "license": "MIT",
+  "samples": [
+    {
+      "displayName": "Playtesting Sample",
+      "description": "Contains an example of GameCoupons API methods",
+      "path": "Samples~/Playtesting"
+    },
+	{
+      "displayName": "LocationSelection Sample",
+      "description": "Contains an example of location selection canvas.",
+      "path": "Samples~/LocationSelection"
+    }
+  ],
   "author": "github.com/artemvetik"
 }

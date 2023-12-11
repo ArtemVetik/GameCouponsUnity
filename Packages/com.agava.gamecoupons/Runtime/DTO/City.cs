@@ -17,7 +17,7 @@ namespace Agava.GameCoupons
             [field: Preserve]
             public float Longitude;
             [field: Preserve]
-            public float Latidute;
+            public float Latitude;
         }
     }
 }
