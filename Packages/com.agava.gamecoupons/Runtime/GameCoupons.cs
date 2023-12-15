@@ -7,7 +7,7 @@ namespace Agava.GameCoupons
 {
     public static class GameCoupons
     {
-        private const string BaseAddress = "https://stage.game-coupon.com";
+        private const string Host = "https://stage.game-coupon.com";
 
         private static LoginResponse _loginData;
         private static string _functionId;
@@ -39,7 +39,7 @@ namespace Agava.GameCoupons
                 platform_ids = new int[0],
                 exclude_organization_ids = new int[0],
             };
-            using var request = UnityWebRequest.Post($"{BaseAddress}/api/v1/coupon_issuance", JsonUtility.ToJson(requestData), "application/json");
+            using var request = UnityWebRequest.Post($"{Host}/api/v1/coupon_issuance", JsonUtility.ToJson(requestData), "application/json");
             request.SetRequestHeader("Authorization", $"Bearer {_loginData.access}");
 
             await request.SendWebRequest();
@@ -47,11 +47,11 @@ namespace Agava.GameCoupons
             return Parse<CouponIssuanceResponse>(request, onErrorCallback);
         }
 
-        public static async Task<GamesResponse> GetGames(int page = 1, int size = 50, Action<string> onErrorCallback = null)
+        public static async Task<GamesResponse> Games(int page = 1, int size = 50, Action<string> onErrorCallback = null)
         {
             ThrowIfNotAuthorized();
 
-            using var request = UnityWebRequest.Get($"{BaseAddress}/api/v1/games?page={page}&size={size}");
+            using var request = UnityWebRequest.Get($"{Host}/api/v1/games?page={page}&size={size}");
             request.SetRequestHeader("Authorization", $"Bearer {_loginData.access}");
 
             await request.SendWebRequest();
@@ -59,11 +59,23 @@ namespace Agava.GameCoupons
             return Parse<GamesResponse>(request, onErrorCallback);
         }
 
+        public static async Task<LocationsResponse> Locations(LocationsRequest requestData, Action<string> onErrorCallback = null)
+        {
+            ThrowIfNotAuthorized();
+
+            using var request = UnityWebRequest.Get($"{Host}/api/v1/locations?{requestData.CreateQuery()}");
+            request.SetRequestHeader("Authorization", $"Bearer {_loginData.access}");
+
+            await request.SendWebRequest();
+
+            return Parse<LocationsResponse>(request, onErrorCallback);
+        }
+
         public static async Task<GenresResponse> Genres(int page = 1, int size = 50, Action<string> onErrorCallback = null)
         {
             ThrowIfNotAuthorized();
 
-            using var request = UnityWebRequest.Get($"{BaseAddress}/api/v1/genres?page={page}&size={size}");
+            using var request = UnityWebRequest.Get($"{Host}/api/v1/genres?page={page}&size={size}");
             request.SetRequestHeader("Authorization", $"Bearer {_loginData.access}");
 
             await request.SendWebRequest();
@@ -75,7 +87,7 @@ namespace Agava.GameCoupons
         {
             ThrowIfNotAuthorized();
 
-            using var request = UnityWebRequest.Get($"{BaseAddress}/api/v1/organizations?page={page}&size={size}");
+            using var request = UnityWebRequest.Get($"{Host}/api/v1/organizations?page={page}&size={size}");
             request.SetRequestHeader("Authorization", $"Bearer {_loginData.access}");
 
             await request.SendWebRequest();
@@ -87,7 +99,7 @@ namespace Agava.GameCoupons
         {
             ThrowIfNotAuthorized();
 
-            using var request = UnityWebRequest.Get($"{BaseAddress}/api/v1/platforms?page={page}&size={size}");
+            using var request = UnityWebRequest.Get($"{Host}/api/v1/platforms?page={page}&size={size}");
             request.SetRequestHeader("Authorization", $"Bearer {_loginData.access}");
 
             await request.SendWebRequest();
@@ -100,7 +112,7 @@ namespace Agava.GameCoupons
             ThrowIfNotAuthorized();
 
             var postData = $"{{\"refresh\": \"{_loginData.refresh}\"}}";
-            using var request = UnityWebRequest.Post($"{BaseAddress}/api/v1/refresh", postData, "application/json");
+            using var request = UnityWebRequest.Post($"{Host}/api/v1/refresh", postData, "application/json");
 
             await request.SendWebRequest();
 
@@ -116,16 +128,6 @@ namespace Agava.GameCoupons
             };
 
             return true;
-        }
-
-        public static async Task<CityListResponse> CityList(string language, Action<string> onErrorCallback = null)
-        {
-            var postData = $"{{\"method\": \"CITY_LIST\", \"body\": \"{language}\"}}";
-            using var request = UnityWebRequest.Post($"https://functions.yandexcloud.net/{_functionId}?integration=raw", postData, "application/json");
-
-            await request.SendWebRequest();
-
-            return Parse<CityListResponse>(request, onErrorCallback);
         }
 
         private static void ThrowIfNotAuthorized()
