@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,50 +11,74 @@ namespace Agava.GameCoupons.Samples.LocationSelection.Canvas
 
         [SerializeField] private CityButton _buttonTemplate;
         [SerializeField] private Transform _container;
+        [SerializeField] private Text _pageText;
         [SerializeField] private Button _closeButton;
+        [SerializeField] private Button _nextPageButton;
+        [SerializeField] private Button _previousPageButton;
 
-        private Action _onClosed;
+        private List<CityButton> _buttonInstances = new();
 
-        private void OnEnable() => _closeButton.onClick.AddListener(OnCloseButtonClicked);
+        public event Action<string> Selected;
+        public event Action NextPageClicked;
+        public event Action PreviousPageClicked;
+        public event Action Closed;
 
-        private void OnDisable() => _closeButton.onClick.RemoveListener(OnCloseButtonClicked);
+        private void OnEnable()
+        {
+            _closeButton.onClick.AddListener(OnCloseButtonClicked);
+            _nextPageButton.onClick.AddListener(OnNextButonClicked);
+            _previousPageButton.onClick.AddListener(OnPreviousButonClicked);
+        }
 
-        public static void Create(string[] cities, Action<string> onSelected, Action onClosed)
+        private void OnDisable()
+        {
+            _closeButton.onClick.RemoveListener(OnCloseButtonClicked);
+            _nextPageButton.onClick.RemoveListener(OnNextButonClicked);
+            _previousPageButton.onClick.RemoveListener(OnPreviousButonClicked);
+        }
+
+        public static LocationSelectionCanvas Create()
         {
             var canvas = Resources.Load<LocationSelectionCanvas>(ResourceName);
-            var canvasInstance = Instantiate(canvas);
-            canvasInstance.Render(cities, onSelected, onClosed);
+            return Instantiate(canvas);
         }
 
-        public static IEnumerator CreateAsync(string[] cities, Action<string> onSelected, Action onClosed)
+        public void Render(int page, string[] cities)
         {
-            var request = Resources.LoadAsync<LocationSelectionCanvas>(ResourceName);
+            foreach (var button in _buttonInstances)
+                Destroy(button.gameObject);
 
-            yield return request;
-            
-            var canvasInstance = Instantiate(request.asset as LocationSelectionCanvas);
-            canvasInstance.Render(cities, onSelected, onClosed);
-        }
+            _buttonInstances.Clear();
 
-        internal void Render(string[] cities, Action<string> onSelected, Action onClosed)
-        {
+            _pageText.text = $"Page {page}";
+
             foreach (var city in cities)
             {
                 var button = Instantiate(_buttonTemplate, _container);
                 button.Render(city, (city) =>
                 {
-                    onSelected?.Invoke(city);
+                    Selected?.Invoke(city);
                     Destroy(gameObject);
                 });
-            }
 
-            _onClosed = onClosed;
+                _buttonInstances.Add(button);
+            }
         }
 
         private void OnCloseButtonClicked()
         {
-            _onClosed?.Invoke();
+            Closed?.Invoke();
             Destroy(gameObject);
+        }
+
+        private void OnNextButonClicked()
+        {
+            NextPageClicked?.Invoke();
+        }
+
+        private void OnPreviousButonClicked()
+        {
+            PreviousPageClicked?.Invoke();
         }
     }
 }
